@@ -1,5 +1,6 @@
 #include <iostream>
 #include<stdlib.h>
+#include "vec3.h"
 using namespace std;
 int main()
 {
@@ -17,7 +18,8 @@ int main()
             int ir = int(255.99*r);
             int ig = int(255.99*g);
             int ib = int(255.99*b);
-            cout<<ir<<" "<<ig<<" "<<ib<<"\n";
+            vec3 color(ir,ig,ib);
+            cout<<color<<"\n";
 
         }
     }

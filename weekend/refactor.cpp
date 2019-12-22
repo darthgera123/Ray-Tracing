@@ -5,7 +5,8 @@
 // #include "vec3.h"
 #include "hitable_list.h"
 #include "sphere.h"
-#include "ray.h"
+// #include "ray.h"
+#include "camera.h"
 using namespace std;
 // Now we compute surface normals and intersect rays with them
 
@@ -25,27 +26,26 @@ int main()
 {
     int nx = 200;
     int ny = 100;
+    int ns = 100;
     // randomize();
     cout<<"P3\n"<<nx<<" "<<ny<<"\n255\n";
-    vec3 lower_left_corner(-2,-1,-1);
-    vec3 horizontal(4,0,0);
-    vec3 vertical(0,2,0);
-    // we use a right handed origin system, upward y is +ve, rightward x is +ve. camera is at origin.z = -1
-    vec3 origin(0,0,0);
     hitable *list[2];
     list[0] = new sphere(vec3(0,0,-1),0.5);
     list[1] = new sphere(vec3(0,-100.5,-1),100);
     hitable *world = new hitable_list(list,2);
+    camera cam;
     for(int j=ny-1;j>-1;j--){
         for(int i=0;i<nx;i++){
-            float u = float(i)/float(nx);
-            float v = float(j)/float(ny);
-            vec3 direction = lower_left_corner+u*horizontal+v*vertical;
-            // direction is a unit vector.
-            direction = unit_vector(direction);
-            ray r(origin,direction);
-            // vec3 p = r.point_at_parameter(2);
-            vec3 col = color(r,world);
+            vec3 col(0,0,0);
+            // we take multiple samples of the same pixel and take average of them. 
+            // This helps us do antialiasing.
+            for(int k=0;k<ns;k++){
+                float u = float(i+drand48())/float(nx);
+                float v = float(j+drand48())/float(ny);
+                ray r = cam.get_ray(u,v);
+                col+=color(r,world);
+            }
+            col/=float(ns);
             int ir = int(255.99*col[0]);
             int ig = int(255.99*col[1]);
             int ib = int(255.99*col[2]);

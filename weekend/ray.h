@@ -8,7 +8,7 @@
 
 class ray{
 public:
-	ray();
+	ray(){}
 	vec3 A;
 	vec3 B;
 	ray(const vec3& a, const vec3& b){

@@ -16,13 +16,77 @@ public:
 inline double random_double() {
     return rand() / (RAND_MAX + 1.0);
 }
+// qsort compare functions
+int box_x_compare(const void *a,const void *b){
+	aabb box_left,box_right;
+	hitable *ah = *(hitable**)a;
+	hitable *bh = *(hitable**)b;
+	if(!ah->bounding_box(0,0,box_left)||!bh->bounding_box(0,0,box_right))
+		std::cerr<<"no bounding_box in bvh_node constructor";
+	if(box_left.min().x()-box_right.min().x()<0){
+		return -1;
+	}
+	else
+		return 1;
+
+}
+int box_y_compare(const void *a,const void *b){
+	aabb box_left,box_right;
+	hitable *ah = *(hitable**)a;
+	hitable *bh = *(hitable**)b;
+	if(!ah->bounding_box(0,0,box_left)||!bh->bounding_box(0,0,box_right))
+		std::cerr<<"no bounding_box in bvh_node constructor";
+	if(box_left.min().y()-box_right.min().y()<0){
+		return -1;
+	}
+	else
+		return 1;
+
+}
+int box_z_compare(const void *a,const void *b){
+	aabb box_left,box_right;
+	hitable *ah = *(hitable**)a;
+	hitable *bh = *(hitable**)b;
+	if(!ah->bounding_box(0,0,box_left)||!bh->bounding_box(0,0,box_right))
+		std::cerr<<"no bounding_box in bvh_node constructor";
+	if(box_left.min().z()-box_right.min().z()<0){
+		return -1;
+	}
+	else
+		return 1;
+
+}
 
 // This is the most crucial part of the ray tracer. it involves splitting of the nodes
 // we want to ensure this happens efficiently and splitting is done well. SO we choose a random axis
 // then sort them and put half in each subtree.
 
-bool bvh_node::bvh_node(hitable **l,int n,float time0,float time1){
+bvh_node::bvh_node(hitable **l,int n,float time0,float time1){
 	int axis = int(3*random_double());
+	if(axis==0){
+		qsort(l,n,sizeof(hitable *),box_x_compare);
+	}
+	if(axis==1){
+		qsort(l,n,sizeof(hitable *),box_y_compare);
+	}
+	if(axis==2){
+		qsort(l,n,sizeof(hitable *),box_z_compare);
+	}
+	if(n==1){
+		left=right=l[0];
+	}else if(n==2){
+		left=l[0];
+		right = l[1];
+	}else{
+		left = new bvh_node(l,n/2,time0,time1);
+		right = new bvh_node(l+n/2,n-n/2,time0,time1);
+	}
+	aabb box_left,box_right;
+	if(!left->bounding_box(time0,time1,box_left)||!right->bounding_box(time0,time1,box_right)){
+		std::cerr<<"no bounding_box in construction\n";
+	}
+	box = surrounding_box(box_left,box_right);
+
 }
 
 
@@ -32,7 +96,7 @@ bool bvh_node::bounding_box(float t0,float t1,aabb& b)const{
 }
 
 // checking for child nodes recursively if it hits in that. if it hits any one child node then it hits parent node
-bool bvh::hit(const ray& r,float tmin,float tmax,hit_record& rec)const{
+bool bvh_node::hit(const ray& r,float tmin,float tmax,hit_record& rec)const{
 	if(box.hit(r,tmin,tmax)){
 		hit_record left_rec,right_rec;
 		bool hit_left = left->hit(r,tmin,tmax,left_rec);

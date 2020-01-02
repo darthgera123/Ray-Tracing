@@ -2,6 +2,7 @@
 #define MATERIALH
 
 #include "hitable.h"
+#include "texture.h"
 // this computes the random direction the ray would travel after hitting the diffuse surface
 vec3 random_in_unit_sphere(){
     vec3 p;
@@ -22,7 +23,7 @@ public:
 
 class lambertian : public material {
     public:
-        lambertian(const vec3& a){
+        lambertian(texture *a){
         	albedo=a;
         }
         virtual bool scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const  {
@@ -31,11 +32,12 @@ class lambertian : public material {
         	// in direction of point-p. This somewhat estimates a lambertian surface.
              vec3 target = rec.p + rec.normal + random_in_unit_sphere();
              scattered = ray(rec.p, target-rec.p,r_in.time());
-             attenuation = albedo;
+             attenuation = albedo->value(0,0,rec.p);
              return true;
         }
 
-        vec3 albedo;
+        // vec3 albedo;
+        texture *albedo;
 };
 // returns ray after reflection on a smooth metallic surface
 vec3 reflect(const vec3& v, const vec3& n){
@@ -57,8 +59,8 @@ public:
 	}
 	virtual bool scatter(const ray& r_in,const hit_record& rec, vec3& attenuation,ray& scattered)const{
 		vec3 reflected = reflect(unit_vector(r_in.direction()),rec.normal);
-		scattered = ray(rec.p,reflected+fuzz*random_in_unit_sphere(),r_in.time());
-		// scattered = ray(rec.p,reflected);
+		// scattered = ray(rec.p,reflected+fuzz*random_in_unit_sphere(),r_in.time());
+		scattered = ray(rec.p,reflected,r_in.time());
 		attenuation = albedo;
 		return (dot(scattered.direction(),rec.normal)>0);
 	}

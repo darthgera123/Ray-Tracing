@@ -1,6 +1,7 @@
 #ifndef TEXTUREH
 #define TEXTUREH
 // #include "vec3.h"
+#include "perlin.h"
 
 // now we treat colors as solid texture which will be changed everywhere
 class texture{
@@ -38,4 +39,24 @@ public:
 	}
 };
 
+// to increase frequency we use scale
+class noise_texture:public texture{
+public:
+	noise_texture(){}
+	noise_texture(float sc){
+		scale=sc;
+	}
+	virtual vec3 value(float u,float v,const vec3& p)const{
+		// return vec3(1,1,1)*noise.noise(scale*p);
+		// return vec3(1,1,1)*0.5*(1+noise.turb(scale*p));
+		// The idea is to make noise a sinusoidal texture with phase shifts to get regular bands
+		// marble like effect also called the hello world of procedural rendering
+		// double xy = scale*p.z()+10*noise.turb(p);
+		double xy = scale*sqrt(p.x()*p.x()+p.y()*p.y())+2*noise.turb(p);
+		return vec3(1,1,1)*0.5*(1+sin(xy));
+	}
+	perlin noise;
+	float scale;
+
+};
 #endif

@@ -2,11 +2,12 @@
 #define CAMERAH
 
 #include "ray.h"
+#include "random.h"
 
 vec3 random_in_unit_disk(){
 	vec3 p;
 	do{
-		p=2*vec3(drand48(),drand48(),drand48()) - vec3(1,1,0);
+		p=2*vec3(random_double(),random_double(),random_double()) - vec3(1,1,0);
 	}while(dot(p,p)>=1);
 	return p;
 }

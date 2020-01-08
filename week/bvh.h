@@ -1,6 +1,8 @@
 #ifndef BVHH
 #define BVHH
+
 #include "hitable.h"
+#include "random.h"
 
 // pointing to the root node
 class bvh_node:public hitable{
@@ -13,9 +15,7 @@ public:
 	virtual bool hit(const ray& r,float tmin,float tmax,hit_record& rec)const;
 	virtual bool bounding_box(float t0,float t1,aabb& b)const;
 };
-inline double random_double() {
-    return rand() / (RAND_MAX + 1.0);
-}
+
 // qsort compare functions
 int box_x_compare(const void *a,const void *b){
 	aabb box_left,box_right;

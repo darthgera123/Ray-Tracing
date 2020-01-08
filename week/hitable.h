@@ -2,7 +2,7 @@
 #ifndef HITABLEH
 #define HITABLEH
 
-#include "ray.h"
+// #include "ray.h"
 #include "aabb.h"
 
 // tells the compiler that the pointer is to the class material

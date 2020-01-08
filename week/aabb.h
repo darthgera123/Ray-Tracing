@@ -3,6 +3,7 @@
 #ifndef AABBH
 #define AABBH
 
+// #include "hitable.h"
 #include "ray.h"
 // faster than inbuilt fmin and fmax
 float ffmin(float a,float b){

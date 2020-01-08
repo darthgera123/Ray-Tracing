@@ -3,7 +3,7 @@
 #define SPHEREH
 
 #include "hitable.h"
-#include "aabb.h"
+// #include "aabb.h"
 // #include "material.h"
 
 class sphere:public hitable{

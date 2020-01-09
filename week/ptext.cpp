@@ -10,6 +10,9 @@
 #include "camera.h"
 #include <cstdlib>
 #include "random.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+#include "surface_texture.h"
 using namespace std;
 
 
@@ -29,6 +32,7 @@ vec3 color(const ray &r,hitable *world,int depth){
         if(depth<20 && rec.mat_ptr->scatter(r,rec,attenuation,scattered)){
             // cout<<attenuation<<" hello"<<endl;
             return attenuation*color(scattered,world,depth+1);
+            // return attenuation;
         }else{
             // shadow
             return vec3(0,0,0);
@@ -37,7 +41,8 @@ vec3 color(const ray &r,hitable *world,int depth){
     else{
         vec3 unit = unit_vector(r.direction());
         float t = 0.5*(unit.y()+1);
-        return (1.0-t)*vec3(1,1,1) + t*vec3(0.5,0.7,1);
+        // return (1.0-t)*vec3(1,1,1) + t*vec3(0.5,0.7,1);
+        return vec3(0,0,0);
     }
 }
 
@@ -132,6 +137,13 @@ hitable *perlin_two_spheres(){
     return new hitable_list(list,2);
     
 }
+hitable *earth() {
+    int nx, ny, nn;
+    //unsigned char *tex_data = stbi_load("tiled.jpg", &nx, &ny, &nn, 0);
+    unsigned char *tex_data = stbi_load("earthmap.jpg", &nx, &ny, &nn, 0);
+    material *mat =  new lambertian(new image_texture(tex_data, nx, ny));
+    return new sphere(vec3(0,0, 0), 2, mat);
+}
 int main()
 {
     int nx = 1000;
@@ -145,8 +157,8 @@ int main()
     // list[2] = new sphere(vec3(1,0,-1),0.5, new metal(vec3(0.8,0.6,0.2),0.3));
     // list[3] = new sphere(vec3(-1,0,-1),0.5, new dielectric(1.5));
     // // list[4] = new sphere(vec3(-1,-1,-1),-0.45, new dielectric(1.5));
-    hitable *world = perlin_two_spheres();
-    vec3 lookfrom(13,2,3);
+    hitable *world = earth();
+    vec3 lookfrom(13,0,3);
     vec3 lookat(0,0,0);
     vec3 up(0,1,0);
     // float dist_to_focus = (lookfrom-lookat).length();

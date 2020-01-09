@@ -15,6 +15,15 @@ struct hit_record{
 	vec3 normal;
 	material *mat_ptr;
 };
+// Now we try to do texture mapping and to do that we map image coordinates to texture coordinates
+// this returns the fractional uv for the hittable
+void get_sphere_uv(const vec3& p, float& u,float& v){
+	float phi = atan2(p.z(),p.x());
+	float theta = asin(p.y());
+	// normalization
+	u = 1-(phi+M_PI)/(2*M_PI);
+	v = (theta+M_PI/2)/M_PI;
+}
 // abstract class. virtual keyword helps in function overriding
 // the derived class will overule it
 class hitable{

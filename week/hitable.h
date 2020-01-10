@@ -10,6 +10,8 @@ class material;
 // p is the point where it hits. t is value of t in extrinsic equation of the ray
 // normal is the surface normal where the object hits
 struct hit_record{
+	float u;
+	float v;
 	float t;
 	vec3 p;
 	vec3 normal;

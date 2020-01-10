@@ -51,8 +51,8 @@ public:
 		// return vec3(1,1,1)*0.5*(1+noise.turb(scale*p));
 		// The idea is to make noise a sinusoidal texture with phase shifts to get regular bands
 		// marble like effect also called the hello world of procedural rendering
-		// double xy = scale*p.z()+10*noise.turb(p);
-		double xy = scale*sqrt(p.x()*p.x()+p.y()*p.y())+2*noise.turb(p);
+		double xy = scale*p.z()+10*noise.turb(p);
+		// double xy = scale*sqrt(p.x()*p.x()+p.y()*p.y())+2*noise.turb(p);
 		return vec3(1,1,1)*0.5*(1+sin(xy));
 	}
 	perlin noise;
